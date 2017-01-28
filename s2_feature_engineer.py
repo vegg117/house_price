@@ -14,8 +14,11 @@ data = pd.read_csv(clean_data_file)
 
 
 # 类别特征，onehot编码
-categorial_features = ['BsmtExposure']
-
+print data.select_dtypes(include=[object]).columns.values
+categorial_features = ['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2',
+                       'BsmtFinSF1','BsmtFinSF2', 'Alley', 'MasVnrType',
+                       'Electrical', 'FireplaceQu', 'GarageType', 'GarageQual'
+                       ]
 print 'before categorial:', data.shape
 categorial_data = pd.get_dummies(data[categorial_features])
 # print categorial_data.head()
@@ -26,7 +29,10 @@ data.drop(categorial_features, axis=1, inplace=True)
 print 'after categorial:', data.shape
 
 # 数值特征， 归一化
-numeric_features = ['1stFlrSF', '2ndFlrSF']
+print data.select_dtypes(exclude=[object]).columns.values
+numeric_features = ['LotFrontage', 'MasVnrArea', 'LotArea', 'GarageYrBlt', 'GarageCars',
+                    'GarageArea'
+                    ]
 scaler = preprocessing.StandardScaler()
 data[numeric_features] = scaler.fit_transform(data[numeric_features])
 print data.head()
