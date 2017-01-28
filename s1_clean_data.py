@@ -16,6 +16,7 @@ data = pd.concat([data_train, data_test])
 
 #print len(data[data['is_train'] == False]) + len(data[data['is_train'] == True])
 
+# 缺失值处理
 
 # Looking at categorical values
 def cat_exploration(column):
@@ -25,10 +26,15 @@ def cat_exploration(column):
 def cat_imputation(column, value):
     data.loc[data[column].isnull(),column] = value
 
-def fea_Fence():
+def LotFrontage_LotArea():
+    cond = data['LotFrontage'].isnull()
+    data.LotFrontage[cond] = data.SqrtLotArea[cond]
+    del data['SqrtLotArea']
+
+def Fence():
     cat_imputation('Fence', 'None')
 
-fea_Fence()
+Fence()
 
 data.to_csv(clean_data_file, index=False)
 
