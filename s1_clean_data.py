@@ -27,14 +27,69 @@ def cat_imputation(column, value):
     data.loc[data[column].isnull(),column] = value
 
 def LotFrontage_LotArea():
+    #data['LotFrontage'].corr(data['LotArea'])
+    data['SqrtLotArea'] = np.sqrt(data['LotArea'])
+    data['LotFrontage'].corr(data['SqrtLotArea'])
     cond = data['LotFrontage'].isnull()
     data.LotFrontage[cond] = data.SqrtLotArea[cond]
     del data['SqrtLotArea']
 
+def Alley():
+    #cat_exploration('Alley')
+    cat_imputation('Alley','None')
+
+def MasVnr():
+    #data[['MasVnrType', 'MasVnrArea']][data['MasVnrType'].isnull() == True]
+    #cat_exploration('MasVnrType')
+    cat_imputation('MasVnrType', 'None')
+    cat_imputation('MasVnrArea', 0.0)
+
+def Basement():
+    basement_cols=['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2','BsmtFinSF1','BsmtFinSF2']
+    #houseprice[basement_cols][houseprice['BsmtQual'].isnull()==True]
+    for cols in basement_cols:
+        if 'FinSF' not in cols:
+            cat_imputation(cols, 'None')
+def Electrical():
+    # cat_exploration('Electrical')
+    cat_imputation('Electrical', 'SBrkr')
+
+def Fireplace():
+    # cat_exploration('FireplaceQu')
+    # data['Fireplaces'][data['FireplaceQu'].isnull() == True].describe()
+    cat_imputation('FireplaceQu', 'None')
+    # pd.crosstab(data.Fireplaces, data.FireplaceQu)
+
+def Garages():
+    garage_cols = ['GarageType', 'GarageQual', 'GarageCond', 'GarageYrBlt', 'GarageFinish', 'GarageCars', 'GarageArea']
+    #data[garage_cols][data['GarageType'].isnull() == True]
+    for cols in garage_cols:
+        if data[cols].dtype == np.object:
+            cat_imputation(cols, 'None')
+        else:
+            cat_imputation(cols, 0)
+
+def Pool():
+    # cat_exploration('PoolQC')
+    # data['PoolArea'][data['PoolQC'].isnull() == True].describe()
+    cat_imputation('PoolQC', 'None')
+
 def Fence():
     cat_imputation('Fence', 'None')
 
+def MiscFeature():
+    cat_imputation('MiscFeature', 'None')
+
+LotFrontage_LotArea()
+Alley()
+MasVnr()
+Basement()
+Electrical()
+Fireplace()
+Garages()
+Pool()
 Fence()
+MiscFeature()
 
 data.to_csv(clean_data_file, index=False)
 
