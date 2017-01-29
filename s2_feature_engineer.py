@@ -12,6 +12,11 @@ data = pd.read_csv(clean_data_file)
 # 添加新特征
 
 
+def type_handle():
+    data['MSSubClass'] = data['MSSubClass'].astype(str)
+    data['OverallQual'] = data['OverallQual'].astype(str)
+    data['OverallCond'] = data['OverallCond'].astype(str)
+
 def time_relative():
     # ['YearBuilt', 'YearRemodAdd', 'YrSold', 'MoSold']
 
@@ -38,7 +43,7 @@ def time_relative():
     mosold = data['MoSold']
     season = []
     for m in mosold:
-        if m == 0:
+        if m <= 0:
             season.append("none")
         elif m <= 3:
             season.append("spring")
@@ -66,6 +71,7 @@ def garage_relative():
     # 增加属性exist_garage标识车库是否存在
     gar_year = data['GarageYrBlt']
     data['exist_garage'] = (gar_year != 0)
+    data['exist_garage'] = data['exist_garage'].astype(str)
     # print data['exist_garage'].head(100)
 
     gap = data['GarageYrBlt'] - data['YearBuilt']
@@ -85,7 +91,7 @@ def garage_relative():
 
 garage_relative()
 time_relative()
-
+type_handle()
 
 
 base_columns = ['Id', 'is_train', 'SalePrice']
@@ -96,11 +102,6 @@ features = data[base_columns]
 
 # a = ["'" + x + "'" for x in data.select_dtypes(include=[object]).columns.values]
 # print ", ".join(a)
-
-# categorial_features = ['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2',
-#                        'BsmtFinSF1','BsmtFinSF2', 'Alley', 'MasVnrType',
-#                        'Electrical', 'FireplaceQu', 'GarageType', 'GarageQual'
-#                        ]
 
 # 删除的属性PoolQC、MiscFeature
 categorial_features = ['Alley', 'BldgType', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
@@ -117,10 +118,11 @@ categorial_features = ['Alley', 'BldgType', 'BsmtCond', 'BsmtExposure', 'BsmtFin
                        'SeaSold', 'MoSold','YearBuilt', 'YearRemodAdd', 'YrSold', 'ysold_msold',
 
                        ]
-
 print 'before categorial:', features.shape
 categorial_data = pd.get_dummies(data[categorial_features])
 # print categorial_data.head()
+# print categorial_data.columns.values;
+
 # print data[categorial_features].head()
 features = pd.concat([features, categorial_data], axis=1)
 # data.drop(categorial_features, axis=1, inplace=True)
