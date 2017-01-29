@@ -20,23 +20,26 @@ data = pd.concat([data_train, data_test])
 
 # 缺失值处理
 
-def show_missing():
+def missing_value():
     missing = data.columns[data.isnull().any()].tolist()
-    print data[missing].isnull().sum()
 
-    # 数值型特征缺失值可能为0
-    print "---categorial------------------------------"
-    categorial_features = data.select_dtypes(include=[object])
-    numeric_features = data.select_dtypes(exclude=[object])
+    # print "---categorial------------------------------"
+    # categorial_features = data.select_dtypes(include=[object])
+    # numeric_features = data.select_dtypes(exclude=[object])
+    #
+    # missing = categorial_features.columns[categorial_features.isnull().any()].tolist()
+    # print categorial_features[missing].isnull().sum()
+    #
+    # print "---numeric------------------------------"
+    # # 数值型特征缺失值可能为0,
+    # missing = numeric_features.columns[numeric_features.isnull().any()].tolist()
+    # print numeric_features[missing].isnull().sum()
+    return missing
 
-    missing = categorial_features.columns[categorial_features.isnull().any()].tolist()
-    print categorial_features[missing].isnull().sum()
-
-    print "---numeric------------------------------"
-    # 数值型特征缺失值可能为0,
 
 print "缺失值："
-show_missing()
+print data[missing_value()].isnull().sum()
+# exit()
 
 # Looking at categorical values, 统计输出某个属性每种值的个数
 def cat_exploration(column):
@@ -93,16 +96,19 @@ def Garages():
         else:
             cat_imputation(cols, 0)
 
-def Pool():
-    # cat_exploration('PoolQC')
-    # data['PoolArea'][data['PoolQC'].isnull() == True].describe()
-    cat_imputation('PoolQC', 'None')
 
 def Fence():
     cat_imputation('Fence', 'None')
 
+
+# MiscFeature' and 'PoolQC' have more than 96% nan values, so we can remove them
 def MiscFeature():
-    cat_imputation('MiscFeature', 'None')
+    data.drop(['MiscFeature'], axis=1, inplace=True)
+
+def PoolQC():
+    # cat_exploration('PoolQC')
+    # data['PoolArea'][data['PoolQC'].isnull() == True].describe()
+    data.drop(['PoolQC'], axis=1, inplace=True)
 
 
 def Street_Utilities():
@@ -112,7 +118,37 @@ def Street_Utilities():
     data.drop(to_remove, axis=1, inplace=True)
 
 
+# 剩余缺失值的处理
+def remainLossValue():
+    print "remain loss value feature:"
+    columns = data.columns.values
+    cnt = 0
+    for col in columns:
+        if(len(data[data[col].isnull()]) > 0):
+            cnt += 1
+            print col
+        if data[col].dtype == np.object:
+            cat_imputation(col, 'None')
+        else:
+            cat_imputation(col, 0)
+    print "the mumber of reamin loss value feature is ", cnt
 
+
+# 按行统计每个样本的属性缺失值的个数，剔除离群点
+def line_missing():
+    loss_count = pd.DataFrame(columns=['Id', 'loss'])
+    ids = data['Id']
+    print "总用户数：", len(ids)
+    for id in ids:
+        loss_count.loc[id, 'loss'] = len(data[data[data['Id'] == id].isnull()])
+        exit()
+
+
+print data.head()
+exit()
+
+
+# 缺失值处理
 LotFrontage_LotArea()
 Alley()
 MasVnr()
@@ -120,13 +156,14 @@ Basement()
 Electrical()
 Fireplace()
 Garages()
-Pool()
+PoolQC()
 Fence()
 MiscFeature()
-
+# remainLossValue()
 Street_Utilities()
 
-print "所有属性：\n", data.columns
+line_missing()
+exit()
 
 data.to_csv(clean_data_file, index=False)
 
