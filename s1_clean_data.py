@@ -95,6 +95,7 @@ def Garages():
             cat_imputation(cols, 'None')
         else:
             cat_imputation(cols, 0)
+            # print cols
 
 
 def Fence():
@@ -145,8 +146,10 @@ def line_missing():
 
 
 # print data.head()
-def MSSubClass():
+def type_handle():
     data['MSSubClass'] = data['MSSubClass'].astype(str)
+    data['OverallQual'] = data['OverallQual'].astype(str)
+    data['OverallCond'] = data['OverallCond'].astype(str)
 
 
 # 缺失值处理
@@ -163,7 +166,7 @@ MiscFeature()
 # remainLossValue()
 Street_Utilities()
 
-MSSubClass()
+type_handle()
 # line_missing()
 # exit()
 

@@ -61,12 +61,32 @@ def time_relative():
 
 # def area_relative():
 
+def garage_relative():
+    # 没有车库的，该相关属性值为NA或0，
+    # 增加属性exist_garage标识车库是否存在
+    gar_year = data['GarageYrBlt']
+    data['exist_garage'] = (gar_year != 0)
+    # print data['exist_garage'].head(100)
+
+    gap = data['GarageYrBlt'] - data['YearBuilt']
+    gap[gap < 0] = gap[gap>=0].mean()
+    data['garage_house_build_gap'] = gap
+
+    gap = data['YrSold'] - data['GarageYrBlt']
+    gap[gap < 0] = gap[gap >= 0].mean()
+    data['garage_house_sold_gap'] = gap
+
+    # print gap.head(10)
+    #
+    # exit()
+
+
+
+
+garage_relative()
 time_relative()
 
-'''
-    类型属性 使用
-    MSSubClass
-'''
+
 
 base_columns = ['Id', 'is_train', 'SalePrice']
 features = data[base_columns]
@@ -93,6 +113,7 @@ categorial_features = ['Alley', 'BldgType', 'BsmtCond', 'BsmtExposure', 'BsmtFin
                        'PavedDrive', 'RoofMatl', 'RoofStyle', 'SaleCondition', 'SaleType',
                         'MSSubClass',
 
+                        'exist_garage',
                        'SeaSold', 'MoSold','YearBuilt', 'YearRemodAdd', 'YrSold', 'ysold_msold',
 
                        ]
@@ -124,7 +145,8 @@ numeric_features = ['1stFlrSF', '2ndFlrSF', '3SsnPorch', 'BedroomAbvGr', 'BsmtFi
                     'PoolArea', 'ScreenPorch', 'TotRmsAbvGrd', 'TotalBsmtSF', 'WoodDeckSF',
 
                     'Built_Sold_Gap', 'Remod_Sold_Gap', 'Built_Remod_Gap', 'mean_built_sold_gap',
-                    'mean_remod_sold_gap', 'mean_built_remod_gap'
+                    'mean_remod_sold_gap', 'mean_built_remod_gap',
+                    'garage_house_build_gap', 'garage_house_sold_gap'
                     ]
 
 # print data[numeric_features].head()
