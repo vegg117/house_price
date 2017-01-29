@@ -3,6 +3,9 @@
 import pandas as pd
 import numpy as np
 
+from matplotlib import pyplot as plt
+from matplotlib import cm
+
 clean_data_file = "../data/house_price/tmp/clean_data.csv"
 
 data_train = pd.read_csv('../data/house_price/input/train.csv')
@@ -14,9 +17,26 @@ data_test['is_train'] = False
 data = pd.concat([data_train, data_test])
 #print data.info()
 
-#print len(data[data['is_train'] == False]) + len(data[data['is_train'] == True])
 
 # 缺失值处理
+
+def show_missing():
+    missing = data.columns[data.isnull().any()].tolist()
+    print data[missing].isnull().sum()
+
+    # 数值型特征缺失值可能为0
+    print "---categorial------------------------------"
+    categorial_features = data.select_dtypes(include=[object])
+    numeric_features = data.select_dtypes(exclude=[object])
+
+    missing = categorial_features.columns[categorial_features.isnull().any()].tolist()
+    print categorial_features[missing].isnull().sum()
+
+    print "---numeric------------------------------"
+    # 数值型特征缺失值可能为0,
+
+print "缺失值："
+show_missing()
 
 # Looking at categorical values, 统计输出某个属性每种值的个数
 def cat_exploration(column):
@@ -39,10 +59,6 @@ def LotFrontage_LotArea():
     del data['SqrtLotArea']
 
 def Alley():
-    '''
-    1、 缺失值。用0填充
-    :return:
-    '''
     #cat_exploration('Alley')
     cat_imputation('Alley','None')
 
@@ -88,6 +104,15 @@ def Fence():
 def MiscFeature():
     cat_imputation('MiscFeature', 'None')
 
+
+def Street_Utilities():
+    #print(data['Street'].value_counts())
+    #print(data['Utilities'].value_counts())
+    to_remove = ['Street', 'Utilities']
+    data.drop(to_remove, axis=1, inplace=True)
+
+
+
 LotFrontage_LotArea()
 Alley()
 MasVnr()
@@ -98,6 +123,10 @@ Garages()
 Pool()
 Fence()
 MiscFeature()
+
+Street_Utilities()
+
+print "所有属性：\n", data.columns
 
 data.to_csv(clean_data_file, index=False)
 
