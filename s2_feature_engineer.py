@@ -60,8 +60,13 @@ def time_relative():
     data['ysold_msold'] = ysold_msold
 
 # def area_relative():
-    
+
 time_relative()
+
+'''
+    类型属性 使用
+    MSSubClass
+'''
 
 base_columns = ['Id', 'is_train', 'SalePrice']
 features = data[base_columns]
@@ -86,6 +91,7 @@ categorial_features = ['Alley', 'BldgType', 'BsmtCond', 'BsmtExposure', 'BsmtFin
                        'HouseStyle', 'KitchenQual', 'LandContour', 'LandSlope', 'LotConfig',
                        'LotShape', 'MSZoning', 'MasVnrType', 'Neighborhood',
                        'PavedDrive', 'RoofMatl', 'RoofStyle', 'SaleCondition', 'SaleType',
+                        'MSSubClass',
 
                        'SeaSold', 'MoSold','YearBuilt', 'YearRemodAdd', 'YrSold', 'ysold_msold',
 
@@ -113,7 +119,7 @@ print 'before numeric:', features.shape
 numeric_features = ['1stFlrSF', '2ndFlrSF', '3SsnPorch', 'BedroomAbvGr', 'BsmtFinSF1', 'BsmtFinSF2',
                     'BsmtFullBath', 'BsmtHalfBath', 'BsmtUnfSF', 'EnclosedPorch', 'Fireplaces',
                     'FullBath', 'GarageArea', 'GarageCars', 'GarageYrBlt', 'GrLivArea', 'HalfBath',
-                    'KitchenAbvGr', 'LotArea', 'LotFrontage', 'LowQualFinSF', 'MSSubClass',
+                    'KitchenAbvGr', 'LotArea', 'LotFrontage', 'LowQualFinSF',
                     'MasVnrArea', 'MiscVal', 'OpenPorchSF', 'OverallCond', 'OverallQual',
                     'PoolArea', 'ScreenPorch', 'TotRmsAbvGrd', 'TotalBsmtSF', 'WoodDeckSF',
 

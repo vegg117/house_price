@@ -144,8 +144,9 @@ def line_missing():
         exit()
 
 
-print data.head()
-exit()
+# print data.head()
+def MSSubClass():
+    data['MSSubClass'] = data['MSSubClass'].astype(str)
 
 
 # 缺失值处理
@@ -162,8 +163,9 @@ MiscFeature()
 # remainLossValue()
 Street_Utilities()
 
-line_missing()
-exit()
+MSSubClass()
+# line_missing()
+# exit()
 
 data.to_csv(clean_data_file, index=False)
 
