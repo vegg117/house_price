@@ -18,7 +18,7 @@ data = pd.concat([data_train, data_test])
 
 # 缺失值处理
 
-# Looking at categorical values
+# Looking at categorical values, 统计输出某个属性每种值的个数
 def cat_exploration(column):
     return data[column].value_counts()
 
@@ -27,14 +27,22 @@ def cat_imputation(column, value):
     data.loc[data[column].isnull(),column] = value
 
 def LotFrontage_LotArea():
+    '''
+    1、缺失值。查看LotFrontage与sqrt(LotArea)相关性，用相关性高的值代替LotFrontage的缺失值
+    :return:
+    '''
     #data['LotFrontage'].corr(data['LotArea'])
     data['SqrtLotArea'] = np.sqrt(data['LotArea'])
-    data['LotFrontage'].corr(data['SqrtLotArea'])
+    #data['LotFrontage'].corr(data['SqrtLotArea'])
     cond = data['LotFrontage'].isnull()
     data.LotFrontage[cond] = data.SqrtLotArea[cond]
     del data['SqrtLotArea']
 
 def Alley():
+    '''
+    1、 缺失值。用0填充
+    :return:
+    '''
     #cat_exploration('Alley')
     cat_imputation('Alley','None')
 
