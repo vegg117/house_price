@@ -142,11 +142,12 @@ def line_missing():
     print "总用户数：", len(ids)
     for id in ids:
         loss_count.loc[id, 'loss'] = len(data[data[data['Id'] == id].isnull()])
-        exit()
 
 
-# print data.head()
 
+# # print data.head()
+print data['HalfBath'].head(100)
+exit()
 
 # 缺失值处理
 LotFrontage_LotArea()
@@ -164,6 +165,7 @@ Street_Utilities()
 
 # line_missing()
 # exit()
+
 
 data.to_csv(clean_data_file, index=False)
 

@@ -16,6 +16,8 @@ def type_handle():
     data['MSSubClass'] = data['MSSubClass'].astype(str)
     data['OverallQual'] = data['OverallQual'].astype(str)
     data['OverallCond'] = data['OverallCond'].astype(str)
+    data['HalfBath'] = data['HalfBath'].astype(str)
+    #data['GarageYrBlt'] = data['GarageYrBlt'].astype(str)
 
 def time_relative():
     # ['YearBuilt', 'YearRemodAdd', 'YrSold', 'MoSold']
@@ -66,21 +68,37 @@ def time_relative():
 
 # def area_relative():
 
+
 def garage_relative():
+    # 没有车库的，车库的相关属性已设置为nan或0.
+    # 'GarageType', 'GarageQual', 'GarageCond', 'GarageYrBlt', 'GarageFinish', 'GarageCars', 'GarageArea'
+    #
+    # 买房时有车库无车库可设置一个特征，exist_garage根据车库建造时间与售卖时间而定
+    # 车库的新旧重要？
+
+    # 将一直没有车库的车库建造时间属性值该为很大的数
+
+    data.loc[data['GarageYrBlt'] == 0, 'GarageYrBlt'] = data['YrSold'] + 1
+    gap = data['YrSold'] - data['GarageYrBlt'] + 1
+    exist_garage = (gap < 0)
+    data['exist_garage'] = exist_garage
+    print exist_garage.value_counts()
+    # exit()
+    data["garage_build_sold_gap"] = gap
+    print data["garage_build_sold_gap"].head(100)
+    data.drop('GarageYrBlt', axis=1, inplace=True)
+    # exit()
+
+
     # 没有车库的，该相关属性值为NA或0，
-    # 增加属性exist_garage标识车库是否存在
-    gar_year = data['GarageYrBlt']
-    data['exist_garage'] = (gar_year != 0)
-    data['exist_garage'] = data['exist_garage'].astype(str)
-    # print data['exist_garage'].head(100)
-
-    gap = data['GarageYrBlt'] - data['YearBuilt']
-    gap[gap < 0] = gap[gap>=0].mean()
-    data['garage_house_build_gap'] = gap
-
-    gap = data['YrSold'] - data['GarageYrBlt']
-    gap[gap < 0] = gap[gap >= 0].mean()
-    data['garage_house_sold_gap'] = gap
+    #
+    # gap = data['GarageYrBlt'] - data['YearBuilt']
+    # gap[gap < 0] = gap[gap>=0].mean()
+    # data['garage_house_build_gap'] = gap
+    #
+    # gap = data['YrSold'] - data['GarageYrBlt']
+    # gap[gap < 0] = gap[gap >= 0].mean()
+    # data['garage_house_sold_gap'] = gap
 
     # print gap.head(10)
     #
@@ -112,10 +130,10 @@ categorial_features = ['Alley', 'BldgType', 'BsmtCond', 'BsmtExposure', 'BsmtFin
                        'HouseStyle', 'KitchenQual', 'LandContour', 'LandSlope', 'LotConfig',
                        'LotShape', 'MSZoning', 'MasVnrType', 'Neighborhood',
                        'PavedDrive', 'RoofMatl', 'RoofStyle', 'SaleCondition', 'SaleType',
-                        'MSSubClass',
 
+                        'MSSubClass', 'HalfBath',
                         'exist_garage',
-                       'SeaSold', 'MoSold','YearBuilt', 'YearRemodAdd', 'YrSold', 'ysold_msold',
+                        'SeaSold', 'MoSold','YearBuilt', 'YearRemodAdd', 'YrSold', 'ysold_msold',
 
                        ]
 print 'before categorial:', features.shape
@@ -141,14 +159,14 @@ print 'before numeric:', features.shape
 
 numeric_features = ['1stFlrSF', '2ndFlrSF', '3SsnPorch', 'BedroomAbvGr', 'BsmtFinSF1', 'BsmtFinSF2',
                     'BsmtFullBath', 'BsmtHalfBath', 'BsmtUnfSF', 'EnclosedPorch', 'Fireplaces',
-                    'FullBath', 'GarageArea', 'GarageCars', 'GarageYrBlt', 'GrLivArea', 'HalfBath',
+                    'FullBath', 'GarageArea', 'GarageCars', 'GrLivArea',
                     'KitchenAbvGr', 'LotArea', 'LotFrontage', 'LowQualFinSF',
                     'MasVnrArea', 'MiscVal', 'OpenPorchSF', 'OverallCond', 'OverallQual',
                     'PoolArea', 'ScreenPorch', 'TotRmsAbvGrd', 'TotalBsmtSF', 'WoodDeckSF',
 
+                    'garage_build_sold_gap',
                     'Built_Sold_Gap', 'Remod_Sold_Gap', 'Built_Remod_Gap', 'mean_built_sold_gap',
-                    'mean_remod_sold_gap', 'mean_built_remod_gap',
-                    'garage_house_build_gap', 'garage_house_sold_gap'
+                   # 'garage_house_build_gap', 'garage_house_sold_gap'
                     ]
 
 # print data[numeric_features].head()
