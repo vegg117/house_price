@@ -171,14 +171,20 @@ numeric_features = ['1stFlrSF', '2ndFlrSF', '3SsnPorch', 'BedroomAbvGr', 'BsmtFi
 
 # print data[numeric_features].head()
 numeric_data = data[numeric_features]
-print "剩余的缺失值："
-cnt = 0
-for column in numeric_features:
-    if len (data[data[column].isnull()]) > 0:
-        cnt += 1
-        print column
-    numeric_data[column].fillna(data[column].value_counts().idxmax(), inplace=True)
-print "剩余的缺失值cnt：", cnt
+# print "剩余的缺失值："
+# cnt = 0
+# for column in numeric_features:
+#     if len (data[data[column].isnull()]) > 0:
+#         cnt += 1
+#         print column
+#     # numeric_data[column].fillna(data[column].value_counts().mean, inplace=True)
+# print "剩余的缺失值cnt：", cnt
+# missing = data.columns[data.isnull().any()].tolist()
+# print len(missing)
+# print missing
+missing = data.columns[data.isnull().any()].tolist()
+print data[missing].isnull().sum()
+# exit()
 
 scaler = preprocessing.StandardScaler()
 numeric_data.loc[:, numeric_features] = scaler.fit_transform(numeric_data)

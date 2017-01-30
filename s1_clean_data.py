@@ -20,9 +20,9 @@ data = pd.concat([data_train, data_test])
 
 # 缺失值处理
 
-def missing_value():
+def cat_missing():
     missing = data.columns[data.isnull().any()].tolist()
-
+    print data[missing].isnull().sum()
     # print "---categorial------------------------------"
     # categorial_features = data.select_dtypes(include=[object])
     # numeric_features = data.select_dtypes(exclude=[object])
@@ -38,7 +38,7 @@ def missing_value():
 
 
 print "缺失值："
-print data[missing_value()].isnull().sum()
+cat_missing()
 # exit()
 
 # Looking at categorical values, 统计输出某个属性每种值的个数
@@ -72,11 +72,16 @@ def MasVnr():
     cat_imputation('MasVnrArea', 0.0)
 
 def Basement():
-    basement_cols=['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2','BsmtFinSF1','BsmtFinSF2']
+    basement_cols=['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2','BsmtFinSF1','BsmtFinSF2',
+                   'BsmtFullBath', 'BsmtHalfBath', 'BsmtUnfSF', 'TotalBsmtSF'
+                   ]
     #houseprice[basement_cols][houseprice['BsmtQual'].isnull()==True]
     for cols in basement_cols:
-        if 'FinSF' not in cols:
+        if data[cols].dtype == np.object:
             cat_imputation(cols, 'None')
+        else:
+            cat_imputation(cols, 0)
+
 def Electrical():
     # cat_exploration('Electrical')
     cat_imputation('Electrical', 'SBrkr')
@@ -101,6 +106,16 @@ def Garages():
 def Fence():
     cat_imputation('Fence', 'None')
 
+def Exterior():
+    #print "-------------------"
+    #print cat_exploration('Exterior1st')
+    cat_imputation('Exterior1st', 'none')
+    cat_imputation('Exterior2nd', 'none')
+def remainMissing():
+    cat_imputation('Functional', 'none')
+    cat_imputation('KitchenQual', 'none')
+    cat_imputation('MSZoning', 'none')
+    cat_imputation('SaleType', 'none')
 
 # MiscFeature' and 'PoolQC' have more than 96% nan values, so we can remove them
 def MiscFeature():
@@ -119,22 +134,6 @@ def Street_Utilities():
     data.drop(to_remove, axis=1, inplace=True)
 
 
-# 剩余缺失值的处理
-def remainLossValue():
-    print "remain loss value feature:"
-    columns = data.columns.values
-    cnt = 0
-    for col in columns:
-        if(len(data[data[col].isnull()]) > 0):
-            cnt += 1
-            print col
-        if data[col].dtype == np.object:
-            cat_imputation(col, 'None')
-        else:
-            cat_imputation(col, 0)
-    print "the mumber of reamin loss value feature is ", cnt
-
-
 # 按行统计每个样本的属性缺失值的个数，剔除离群点
 def line_missing():
     loss_count = pd.DataFrame(columns=['Id', 'loss'])
@@ -146,8 +145,8 @@ def line_missing():
 
 
 # # print data.head()
-print data['HalfBath'].head(100)
-exit()
+# print data['TotalBsmtSF'].head(100)
+# exit()
 
 # 缺失值处理
 LotFrontage_LotArea()
@@ -163,8 +162,16 @@ MiscFeature()
 # remainLossValue()
 Street_Utilities()
 
-# line_missing()
+Exterior()
+remainMissing()
+
+
 # exit()
+# print "loss"
+# cat_missing()
+# exit()
+
+
 
 
 data.to_csv(clean_data_file, index=False)
